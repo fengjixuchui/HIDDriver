@@ -1,6 +1,8 @@
 #pragma once
 
+#include <stdlib.h>
 #include <Windows.h>
+
 
 class Device
 {

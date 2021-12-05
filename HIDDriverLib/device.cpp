@@ -1,3 +1,6 @@
+#include "pch.h"
+#include "framework.h"
+
 #include "device.h"
 
 #include <cfgmgr32.h>

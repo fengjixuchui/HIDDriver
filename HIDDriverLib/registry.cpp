@@ -1,3 +1,6 @@
+#include "pch.h"
+#include "framework.h"
+
 #include "registry.h"
 
 RegistryService &RegistryService::get()

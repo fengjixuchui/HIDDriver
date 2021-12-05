@@ -31,7 +31,13 @@ public:
 
     virtual void                        moveCursor(POINT);
     virtual void                        moveCursor(LONG x, LONG y);
+    virtual void                        moveCursor(LONG x1, LONG y1, LONG x2, LONG y2, double z, double mouseMoveSlow);
     virtual void                        moveCursorEx(LONG x, LONG y);
+
+    int                                 getSpeedByRange(int range) const;
+    static int                          getRangeBySpeed(int speed);
+
+    virtual void                        sendMouseReport(CHAR xSpeed, CHAR ySpeed);
 
 protected:
     enum Button {
@@ -42,9 +48,7 @@ protected:
     };
 
     void                                populateRangeSpeedVector();
-    int                                 getSpeedByRange(int range) const;
-
-    static int                          getRangeBySpeed(int speed);
+    
     static POINT                        getCurrentCursorPosition(LPDWORD error);
 
     BYTE                                m_buttons               {BUTTON_NONE};
@@ -68,5 +72,5 @@ private:
     };
 #pragma pack()
 
-    virtual void                        sendMouseReport(CHAR xSpeed, CHAR ySpeed);
+    
 };

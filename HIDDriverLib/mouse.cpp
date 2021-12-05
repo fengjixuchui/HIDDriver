@@ -1,3 +1,6 @@
+#include "pch.h"
+#include "framework.h"
+
 #include "mouse.h"
 
 #include <stdexcept>
@@ -111,6 +114,55 @@ void Mouse::moveCursor(LONG x, LONG y)
         Sleep(1);
     }
 }
+
+//定制一个3D游戏移动鼠标的函数，x1/y1为游戏中心点坐标，x2/y2为检测到的人物中心点坐标，z为三维坐标的z轴距离
+//mouseMoveSlow鼠标变慢的倍数
+void Mouse::moveCursor(LONG x1, LONG y1, LONG x2, LONG y2, double z, double mouseMoveSlow)
+{
+    if (!isInitialized()) throw std::runtime_error{ "ERROR_NOT_INITIALIZED" };
+
+    long x = abs(x2 - x1)* mouseMoveSlow / z;
+    long y = abs(y2 - y1)* mouseMoveSlow / z;
+
+    CHAR xSpeed = static_cast<CHAR>(getSpeedByRange(x));
+    xSpeed = (x2 > x1 ? xSpeed : -xSpeed);
+
+    CHAR ySpeed = static_cast<CHAR>(getSpeedByRange(y));
+    ySpeed = (y2 > y1 ? ySpeed : -ySpeed);
+
+    long speed = abs(xSpeed) + abs(ySpeed);
+
+    //判断是否为0，避免发生被0除错误
+    if ((x+y) > 0 && speed > 0) {
+        //z不用来控制距离，用来控制鼠标移动时间，目的是更短时间更高速度达到效果。
+        //实验发现速度也影响瞄准，所以同时用z控制距离/速度
+        int count = (x + y) / speed / z;
+        //通过控制循环次数小于等于10，控制鼠标移动时间小于等于10ms
+        if (count > 8) count = 8;
+
+        /*
+        for (int i = 0; i < count; i++) {
+            sendMouseReport(xSpeed, ySpeed);
+
+            //循环移动过程中，重新计算速度，逐步降低移动速度
+            if (count >= 1 && i < count) {
+                x = x * (count - i) / count;
+                y = y * (count - i) / count;
+                xSpeed = static_cast<CHAR>(getSpeedByRange(x));
+                xSpeed = (x2 > x1 ? xSpeed : -xSpeed);
+                ySpeed = static_cast<CHAR>(getSpeedByRange(y));
+                ySpeed = (y2 > y1 ? ySpeed : -ySpeed);
+            }
+
+            Sleep(1);
+        }
+        */
+        sendMouseReport(xSpeed, ySpeed);
+        Sleep(count/4);
+
+    }
+}
+
 
 void Mouse::moveCursorEx(LONG x, LONG y)
 {
